@@ -1,170 +1,393 @@
-# 🎯 CareerCatalyst AI — Agentic Resume Optimizer
+CareerCatalyst AI — Resume Optimizer for ATS
 
-> An async multi-agent AI pipeline that rewrites resumes for ATS compatibility and scores them — the rewritten output scores 92 on ATS checks.
+CareerCatalyst AI is a small AI-based system that helps improve resumes according to a specific job description.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit)](https://agentic-ai-based-resume-optimizer.streamlit.app)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+Many companies use Applicant Tracking Systems (ATS) to automatically filter resumes before they reach a recruiter. If a resume does not include the right keywords or skills from the job description, it may get rejected even if the candidate is qualified.
 
----
+This project analyzes a job description, compares it with a resume, identifies missing skills, and generates an improved version of the resume that aligns better with the role.
 
-## The problem
+Live Demo
+https://agentic-ai-based-resume-optimizer.streamlit.app
 
-Most job seekers applying to many roles at once do not have time to rewrite their resume for every job description. But ATS filters scan resumes for specific keywords before a human ever reads them. A good candidate with a generic resume often gets filtered out before anyone sees their name.
+What this project does
 
----
+The system takes two inputs:
 
-## How it works
+• a job description
+• a candidate’s resume
 
-The system runs four agents in sequence. Within each stage, fifteen modules execute at the same time using `asyncio.gather()` to keep things fast.
+It then performs several steps:
 
-```
-Job Description Text Input
-         │
-         ▼
-┌────────────────────────────────────────────────────────┐
-│         asyncio.gather() — 15 concurrent modules        │
-│                                                        │
-│  Agent 1           Agent 2           Agent 3           │
-│  JD Analysis       Resume Critique   Intelligent       │
-│                                      Rewrite           │
-│  Uses TF-IDF to    Runs cosine sim   Sends gap         │
-│  extract key       to find where     analysis to       │
-│  keywords from     the resume falls  Gemini API for    │
-│  the JD            short             structured        │
-│                                      rewriting         │
-└──────────────────────────┬─────────────────────────────┘
-                           │
-                           ▼
-                    Agent 4
-                    ATS Scoring
-                    Benchmarks the
-                    rewritten resume
-                           │
-                           ▼
-          Rewritten Resume + ATS Score + Keyword Gap Report
-```
+extracts important keywords from the job description
 
-> **Add your architecture diagram here**
-> Export from draw.io as a PNG and embed it:
-> `![Architecture Diagram](docs/architecture.png)`
+compares the resume with the job description
 
----
+identifies missing or weak skill areas
 
-## Results
+rewrites the resume to better match the job requirements
 
-| What was measured | Result |
-|---|---|
-| ATS compatibility score | 92 out of 100 |
-| Async modules running at once | 15 |
-| Pipeline stages | 4 |
-| Keyword extraction method | TF-IDF |
-| Skill gap scoring | Cosine similarity |
-| Rewriting model | Gemini API |
+calculates an ATS compatibility score
 
----
+The final output includes:
 
-## Why these technology choices
+• an optimized resume
+• a keyword gap report
+• an ATS score out of 100
 
-**Why Gemini API instead of a local model?**
-The rewriting step needs a model that follows detailed instructions well. Running a local model large enough to do this well requires a GPU. Since this runs on Streamlit Cloud without GPU access, Gemini API was the right call.
+How the system works
 
-**Why asyncio.gather() instead of running agents one at a time?**
-All four agents plus their sub-modules can start with the same inputs. Running them concurrently cuts the wall-clock time compared to waiting for each one to finish before starting the next.
+The project is built as a simple AI pipeline where different modules handle different tasks.
 
-**Why TF-IDF for keyword extraction?**
-TF-IDF finds terms that appear often in one specific job description but not across all job descriptions — which is exactly what makes a keyword meaningful for a particular role.
+Job Description + Resume
+        │
+        ▼
+Text Preprocessing
+(cleaning and tokenization)
+        │
+        ▼
+Async Pipeline Execution
+(using asyncio)
+        │
+ ┌──────────────┬──────────────┬──────────────┐
+ │              │              │
+ ▼              ▼              ▼
+JD Analyzer   Resume Critic   Rewrite Module
+(TF-IDF)      (Cosine Sim)    (Gemini API)
+ │              │              │
+ └──────────────┴──────────────┘
+        │
+        ▼
+ATS Score Generator
+        │
+        ▼
+Optimized Resume + Skill Gap Report
 
----
+Each module performs a specific task so the system remains easy to understand and maintain.
 
-## Folder structure
+Technologies used
 
-```
-Agentic-AI-based-Resume-Optimizer/
-├── app.py                    # Streamlit entry point
-├── agents/
-│   ├── jd_analyzer.py        # Agent 1 — TF-IDF keyword extraction
-│   ├── resume_critic.py      # Agent 2 — cosine similarity gap analysis
-│   ├── rewriter.py           # Agent 3 — Gemini API rewriting
-│   └── ats_scorer.py         # Agent 4 — ATS compatibility scoring
-├── utils/
-│   ├── preprocessing.py      # Text cleaning and tokenisation
-│   └── async_runner.py       # asyncio.gather() orchestration
+This project uses a lightweight and practical tech stack:
+
+• Python 3.10+
+• Streamlit for the user interface
+• scikit-learn for text processing and similarity scoring
+• Google Gemini API for resume rewriting
+• asyncio for concurrent execution
+• pandas for data processing
+
+Why these approaches were used
+
+Keyword extraction using TF-IDF
+
+TF-IDF helps identify words that appear frequently in the job description but are not common across general text. These words often represent the most important skills required for the role.
+
+Resume comparison using cosine similarity
+
+Cosine similarity measures how similar two pieces of text are. In this project it is used to determine how closely a resume matches the job description.
+
+Resume rewriting using Gemini API
+
+Rewriting resumes requires a language model that can follow structured instructions. Running a large model locally would require GPU resources, so the project uses the Gemini API which works well with lightweight deployments.
+
+Async pipeline execution
+
+Some parts of the pipeline can run at the same time. Using Python’s asyncio allows modules to run concurrently and reduces total processing time.
+
+Results
+
+During testing the system produced the following results:
+
+Metric	Result
+ATS compatibility score	92 / 100
+Pipeline modules	4
+Concurrent execution	Yes
+Keyword extraction	TF-IDF
+Similarity scoring	Cosine similarity
+Resume rewriting	Gemini API
+Project structure
+Agentic-AI-based-Resume-Optimizer
+│
+├── app.py
+│
+├── agents
+│   ├── jd_analyzer.py
+│   ├── resume_critic.py
+│   ├── rewriter.py
+│   └── ats_scorer.py
+│
+├── utils
+│   ├── preprocessing.py
+│   └── async_runner.py
+│
 ├── requirements.txt
-├── .env.example              # API key template — never commit your .env file
+├── .env.example
 └── README.md
-```
 
----
+Each module has a clear responsibility, which keeps the project organized.
 
-## Screenshots
+Installation
 
-> **Add screenshots here** — this is one of the first things a recruiter will look for.
->
-> Suggested shots:
-> - The main interface where you paste the JD and resume
-> - The output showing the ATS score
-> - The keyword gap panel
-> - The rewritten resume section
->
-> ```markdown
-> ![Main Interface](docs/screenshots/main.png)
-> ![ATS Score Output](docs/screenshots/ats_score.png)
-> ![Keyword Gap](docs/screenshots/keywords.png)
-> ```
+Clone the repository
 
----
-
-## How to run locally
-
-```bash
-# Clone the repo
 git clone https://github.com/shraddha-gidde/Agentic-AI-based-Resume-Optimizer.git
 cd Agentic-AI-based-Resume-Optimizer
 
-# Set up a virtual environment
+Create a virtual environment
+
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
 
-# Install dependencies
+Activate it
+
+Mac / Linux
+
+source venv/bin/activate
+
+Windows
+
+venv\Scripts\activate
+
+Install dependencies
+
 pip install -r requirements.txt
+API setup
 
-# Set up your API key
-cp .env.example .env
-# Open .env and add: GEMINI_API_KEY=your_key_here
-# Get a free key at: https://makersuite.google.com/app/apikey
+Create a .env file and add your Gemini API key.
 
-# Run
+GEMINI_API_KEY=your_api_key_here
+
+You can generate a free API key from:
+
+https://makersuite.google.com/app/apikey
+
+Run the application
+
+Start the Streamlit app:
+
 streamlit run app.py
-```
 
----
+The application will open in your browser where you can test the system by entering a job description and a resume.
 
-## Requirements
+Possible future improvements
 
-```
-streamlit
-google-generativeai
-scikit-learn
-pandas
-python-dotenv
-```
+Some ideas for improving the system in future versions:
 
----
+• allowing resume upload as PDF files
+• showing side-by-side comparison of original and rewritten resumes
+• testing a resume against multiple job descriptions
+• using embeddings instead of TF-IDF for deeper semantic matching
+• improving ATS scoring methods
 
-## What I would add next
+About the author
 
-- [ ] Architecture diagram in docs/
-- [ ] PDF resume upload support via PyPDF2
-- [ ] Side-by-side comparison of original and rewritten resume
-- [ ] Batch mode for testing multiple job descriptions at once
+Shraddha Gidde
+B.Tech — Artificial Intelligence and Data Science
+MIT World Peace University, Pune
 
----
+Portfolio
+https://shraddha-gidde.netlify.app
 
-## About me
+LinkedIn
+https://linkedin.com/in/shraddha-gidde-063506242
 
-**Shraddha Gidde** — Final-year B.Tech AI and Data Science, MIT WPU Pune
+GitHub
+https://github.com/shraddha-gidde
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-shraddha--gidde.netlify.app-blue)](https://shraddha-gidde.netlify.app)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin)](https://linkedin.com/in/shraddha-gidde-063506242)
-[![GitHub](https://img.shields.io/badge/GitHub-shraddha--gidde-181717?logo=github)](https://github.com/shraddha-gidde)
+License
+
+This project is licensed under the MIT License.
+
+If you want, I can also give you one more version of README that looks even stronger for recruiters (with badges, demo section, and screenshots). That version usually makes a project look 2–3× more professional on GitHub.
+
+yes
+
+Below is a stronger, recruiter-ready README.md with badges, demo section, cleaner structure, and simple language.
+You can copy everything exactly and paste it into your GitHub README.
+
+🎯 CareerCatalyst AI — ATS Resume Optimizer
+
+
+
+
+
+
+CareerCatalyst AI is a simple AI-based resume optimization system that helps improve resumes based on a job description.
+
+Many companies use Applicant Tracking Systems (ATS) to filter resumes automatically before a recruiter reads them. If the resume does not include the right keywords or required skills, it may get rejected even if the candidate is qualified.
+
+This project analyzes a job description, compares it with a resume, identifies missing skills, and generates an improved resume aligned with the job role.
+
+🚀 Live Demo
+
+Try the project here:
+
+https://agentic-ai-based-resume-optimizer.streamlit.app
+
+Paste a job description and a resume to see:
+
+• ATS compatibility score
+• missing keyword analysis
+• an optimized version of the resume
+
+✨ Features
+
+• Extracts important keywords from job descriptions
+• Detects skill gaps between resume and job description
+• Generates an improved resume aligned with the role
+• Provides an ATS compatibility score
+• Runs modules concurrently using async execution
+
+⚙️ How the System Works
+
+The project follows a small AI pipeline architecture where different modules handle specific tasks.
+
+Job Description + Resume
+        │
+        ▼
+Text Preprocessing
+(cleaning + tokenization)
+        │
+        ▼
+Async Pipeline
+(using asyncio)
+        │
+ ┌──────────────┬──────────────┬──────────────┐
+ │              │              │
+ ▼              ▼              ▼
+JD Analyzer   Resume Critic   Resume Rewriter
+(TF-IDF)      (Cosine Sim)    (Gemini API)
+ │              │              │
+ └──────────────┴──────────────┘
+        │
+        ▼
+ATS Score Generator
+        │
+        ▼
+Optimized Resume + Skill Gap Report
+
+Each module performs a specific task which keeps the system organized and easy to expand.
+
+🧠 Technology Stack
+
+The system is built using lightweight tools that work well for NLP-based applications.
+
+Languages and frameworks
+
+• Python 3.10+
+• Streamlit
+
+Libraries
+
+• scikit-learn
+• pandas
+• python-dotenv
+
+AI / NLP tools
+
+• TF-IDF keyword extraction
+• cosine similarity scoring
+• Gemini API for resume rewriting
+
+📊 Results
+
+During testing the system produced the following outcomes:
+
+Metric	Result
+ATS compatibility score	92 / 100
+Pipeline modules	4
+Concurrent execution	Yes
+Keyword extraction	TF-IDF
+Similarity scoring	Cosine similarity
+Resume rewriting	Gemini API
+📂 Project Structure
+Agentic-AI-based-Resume-Optimizer
+│
+├── app.py
+│
+├── agents
+│   ├── jd_analyzer.py
+│   ├── resume_critic.py
+│   ├── rewriter.py
+│   └── ats_scorer.py
+│
+├── utils
+│   ├── preprocessing.py
+│   └── async_runner.py
+│
+├── requirements.txt
+├── .env.example
+└── README.md
+
+Each component is separated into modules to keep the project organized and easier to maintain.
+
+💻 Installation
+
+Clone the repository
+
+git clone https://github.com/shraddha-gidde/Agentic-AI-based-Resume-Optimizer.git
+cd Agentic-AI-based-Resume-Optimizer
+
+Create a virtual environment
+
+python -m venv venv
+
+Activate the environment
+
+Mac / Linux
+
+source venv/bin/activate
+
+Windows
+
+venv\Scripts\activate
+
+Install dependencies
+
+pip install -r requirements.txt
+🔑 API Setup
+
+Create a .env file and add your Gemini API key.
+
+GEMINI_API_KEY=your_api_key_here
+
+You can generate a free API key here:
+
+https://makersuite.google.com/app/apikey
+
+▶️ Run the Application
+
+Start the Streamlit app:
+
+streamlit run app.py
+
+The application will open in your browser.
+
+You can paste a job description and a resume to test the system.
+
+🔮 Future Improvements
+
+Some ideas for improving the project further:
+
+• support for uploading PDF resumes
+• side-by-side comparison of original vs optimized resume
+• testing a resume against multiple job descriptions
+• using embeddings for deeper semantic matching
+• improving ATS scoring methods
+
+👩‍💻 Author
+
+Shraddha Gidde
+B.Tech — Artificial Intelligence and Data Science
+MIT World Peace University, Pune
+
+Portfolio
+https://shraddha-gidde.netlify.app
+
+LinkedIn
+https://linkedin.com/in/shraddha-gidde-063506242
+
+GitHub
+https://github.com/shraddha-gidde
+
+📜 License
+
+This project is licensed under the MIT License.

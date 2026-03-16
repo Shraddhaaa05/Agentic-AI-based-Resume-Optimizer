@@ -150,11 +150,6 @@ Agentic-AI-based-Resume-Optimizer/
 ├── job_formatter.py             # Job data formatting
 ├── file_processor.py            # File upload parsing and cleaning
 │
-├── docs/
-│   └── screenshots/
-│       ├── main_interface.png   # Add your screenshot here
-│       ├── ats_score.png        # Add your screenshot here
-│       └── job_suggestion.png   # Add your screenshot here
 │
 ├── requirements.txt
 ├── .env.example

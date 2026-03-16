@@ -17,13 +17,13 @@ Most job seekers send the same resume to every application. ATS filters reject i
 ## 📸 Screenshots
 
 **Main Interface**
-![Main Interface](docs/screenshots/main_interface.png)
+![Main Interface](main_interface.png)
 
 **ATS Score Output**
-![ATS Score Output](docs/screenshots/ats_score.png)
+![ATS Score Output](ats_score.png)
 
 **Job Suggestions**
-![Job Suggestions](docs/screenshots/job_suggestion.png)
+![Job Suggestions](job_suggestion.png)
 
 ---
 

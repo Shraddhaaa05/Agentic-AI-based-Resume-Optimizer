@@ -12,20 +12,6 @@ Most job seekers send the same resume to every application. ATS filters reject i
 
 **CareerCatalyst AI** is a full multi-agent career platform that goes far beyond simple resume tweaking. Paste a job description and your resume, and the system analyzes the gap, rewrites your resume, scores it for ATS compatibility, prepares you for interviews, researches the company, maps out your learning path, and gives you a networking strategy — all in one Streamlit app powered by the Gemini API and Python asyncio.
 
----
-
-## 📸 Screenshots
-
-**Main Interface**
-![Main Interface](main_interface.png)
-
-**ATS Score Output**
-![ATS Score Output](ats_score.png)
-
-**Job Suggestions**
-![Job Suggestions](job_suggestion.png)
-
----
 
 ## 🔗 Live Demo
 
